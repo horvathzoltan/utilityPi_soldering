@@ -107,9 +107,9 @@ message(OUT_PWD $$OUT_PWD)
 message(QMAKESPEC $$QMAKESPEC) # /home/anti/raspi/qt5/qt5/mkspecs/devices/linux-rasp-pi4-v3d-g++
 message(QT_INSTALL_PREFIX $$QT_INSTALL_PREFIX)
 
+message(*****************)
 for(var, $$list($$enumerate_vars())) {
-    message($$var)
-    message($$eval($$var))
+    message($$var=$$eval($$var))
 }
 
 

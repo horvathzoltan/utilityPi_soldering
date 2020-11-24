@@ -51,12 +51,16 @@ message( "commonlibs folder = "$$COMMON_LIBS )
 # INSTALLDIR = $$COMMON_LIBS
 COMMON_LIBS_FULLPATH = $$shell_path($$HOME/$$COMMON_LIBS)
 
-message( " commonlibs full path = "$$COMMON_LIBS_FULLPATH)
+message( "commonlibs full path = "$$COMMON_LIBS_FULLPATH)
+
+contains(QMAKESPEC,.*linux-rasp-pi\d*-.*){
+    message(rpi)
+    CONFIG += rpi
+}
 
 #unix:!macx: LIBS += -L/home/zoli/build-common-Desktop_Qt_5_12_2_GCC_64bit2-Debug/stringhelper/ -lstringhelper
-unix:!macx:
-{
-message( "hmmmm "$$HOME/$$COMMON_LIBS)
+unix:!macx:{
+message(LIBS added for unix:!macx)
 LIBS += -L$$COMMON_LIBS_FULLPATH/ -llogger
 #LIBS += -L$$COMMON_LIBS_FULLPATH/ -lsignalhelper
 #LIBS += -L$$COMMON_LIBS_FULLPATH/ -lCommandLineParserHelper
@@ -76,10 +80,12 @@ DEPENDPATH += $$HOME/common
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    renderarea.cpp
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    renderarea.h
 
 FORMS += \
     mainwindow.ui
@@ -87,42 +93,38 @@ FORMS += \
 TRANSLATIONS += \
     utilityPi_soldering_hu_HU.ts
 
+unix:rpi:{
+message(LIBS added for raspberry_pi)
 #LIBS += -L/home/anti/raspi/sysroot/usr/lib -lraspicam -lraspicam_cv
 #LIBS += -L/home/anti/raspi/sysroot/usr/lib/lib -lopencv_dnn -lopencv_gapi -lopencv_highgui -lopencv_ml -lopencv_objdetect -lopencv_photo -lopencv_stitching -lopencv_video -lopencv_videoio -lopencv_imgcodecs -lopencv_calib3d -lopencv_features2d -lopencv_flann -lopencv_imgproc -lopencv_core
 LIBS += -L/home/anti/raspi/sysroot/usr/lib/arm-linux-gnueabihf
 LIBS += -L/home/anti/raspi/sysroot/opt/vc/lib -lmmal -lmmal_core -lmmal_util -lmmal_vc_client -lmmal_components -lvchiq_arm -lvcsm -lcontainers -lvcos -lbcm_host
-
 #INCLUDEPATH += /home/anti/raspi/sysroot/usr/include/raspicam
-
-
-# https://doc.qt.io/archives/qt-5.5/qmake-variable-reference.html#config
-message(QMAKE_CC $$QMAKE_CC)
-message(QMAKE_CFLAGS $$QMAKE_CFLAGS)
-message(QMAKE_CXX $$QMAKE_CXX)
-message(QMAKE_CXXFLAGS $$QMAKE_CXXFLAGS)
-#message(QMAKE_EXT_UI $$QMAKE_EXT_UI)
-contains(QMAKE_CXX,.*bcm2708.*){ message(bcm2708) }
-
-message(OUT_PWD $$OUT_PWD)
-message(QMAKESPEC $$QMAKESPEC) # /home/anti/raspi/qt5/qt5/mkspecs/devices/linux-rasp-pi4-v3d-g++
-message(QT_INSTALL_PREFIX $$QT_INSTALL_PREFIX)
-
-message(*****************)
-for(var, $$list($$enumerate_vars())) {
-    message($$var=$$eval($$var))
 }
 
-
-# Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /home/pi/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
-
+## https://doc.qt.io/archives/qt-5.5/qmake-variable-reference.html#config
 # https://doc.qt.io/qt-5/qmake-manual.html
 # Platform Scope Values // mkspecs -  compiler-specific values
 # http://www.wiki.crossplatform.ru/index.php/Undocumented_qmake
 # http://paulf.free.fr/undocumented_qmake.html
 # mkspec folder: $ grep -E -o -r 'QMAKE_PLATFORM.*?$'
 
+
+
+#unix:rpi: message(raspberry_pi)
+
+#message(*****************)
+#for(var, $$list($$enumerate_vars())) {
+#    message($$var=$$eval($$var))
+#}
+
+
+# Default rules for deployment.
+qnx: target.path = /tmp/$${TARGET}/bin
+else: unix:rpi: target.path = /home/pi/$${TARGET}/bin
+else: unix:!android: target.path = /opt/$${TARGET}/bin
+!isEmpty(target.path): INSTALLS += target
+
 DISTFILES += \
-    ProjectMESSAGE
+    ProjectMESSAGE_arm \
+    ProjectMESSAGE_x86

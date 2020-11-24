@@ -6,6 +6,7 @@
 #include <QElapsedTimer>
 #include <QVarLengthArray>
 //#include <QtCharts>
+#include <renderarea.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -29,14 +30,14 @@ private slots:
     void on_timer_timeout();
 
     void on_pushButton_2_clicked();
-
+    void on_paint(QPaintEvent *e);
 private:
     QTimer _timer;
-    QElapsedTimer *_elapsed = nullptr;
+    QElapsedTimer* _elapsed = nullptr;
     QVarLengthArray<HeatData> _heatdata;
     //QChart *_chart;
     Ui::MainWindow *ui;
-
+    RenderArea* _ra;
 
 };
 #endif // MAINWINDOW_H

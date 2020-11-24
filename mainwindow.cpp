@@ -22,6 +22,8 @@ MainWindow::MainWindow(QWidget *parent)
 //    _heatdata.append({375, 260});
 //    _heatdata.append({600, 25}); //end
 
+    _ra = new RenderArea(ui->frame);
+
 }
 
 MainWindow::~MainWindow()
@@ -54,12 +56,13 @@ void MainWindow::on_pushButton_2_clicked()
     delete _elapsed; _elapsed = nullptr;
 }
 
-void MyFrame::paintEvent(QPaintEvent *e) {
-    QPainter paint(this);
-    paint.setPen(Qt::red);
-    paint.drawEllipse(10,10,100,100);
+void MainWindow::on_paint(QPaintEvent *e) {
+    ui->label->setText("r");
+//    QPainter paint(this);
+//    paint.setPen(Qt::red);
+//    paint.drawEllipse(10,10,100,100);
 
-    paint.end();
-    QFrame::paintEvent(e);
+//    paint.end();
+//    QFrame::paintEvent(e);
 }
 

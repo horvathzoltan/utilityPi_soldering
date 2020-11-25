@@ -17,8 +17,18 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
     struct HeatData{
-      int time;
-      int temperature;
+      qreal time;
+      qreal temperature;
+      QString desc;
+
+      QPointF ToQPointF() const {return {time, temperature};}
+
+      static QVarLengthArray<QPointF> ToQPointF(const QVarLengthArray<HeatData>& h )
+      {
+          QVarLengthArray<QPointF> d;
+          for(auto& i:h) d.append(i.ToQPointF());
+          return d;
+      }
     };
 
 public:
@@ -30,7 +40,6 @@ private slots:
     void on_timer_timeout();
 
     void on_pushButton_2_clicked();
-    void on_paint(QPaintEvent *e);
 private:
     QTimer _timer;
     QElapsedTimer* _elapsed = nullptr;

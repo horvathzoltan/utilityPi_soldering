@@ -40,8 +40,11 @@ void RenderArea::paintEvent(QPaintEvent *event)
 //    QRect boundingRect;
 //    p.drawText(rectangle, 0, tr("Hello"), &boundingRect);
 
-    p.scale(2, -1);
-    p.translate(0, -rect.height());
+    qreal rx = rect.width()/_r.width();
+    qreal ry = rect.height()/_r.height();
+    p.translate(0, rect.height());
+    p.scale(rx, -ry);
+
 
     p.drawPolyline(_pl.begin(), _pl.count());
     p.setPen(QPen(Qt::red));
@@ -51,5 +54,4 @@ void RenderArea::paintEvent(QPaintEvent *event)
 //    QLine r3 = {-10, 10, 10, -10};
 //    p.drawLine(r2);
 //    p.drawLine(r3);
-
 }

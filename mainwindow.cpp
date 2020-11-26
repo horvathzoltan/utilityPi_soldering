@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
     _ra->setPen(QPen(Qt::blue));
     _ra->setBrush(QBrush(Qt::lightGray));
     _ra->setPolyLine(HeatData::ToQPointF(_heatdata));
-
+    _ra->setRect({0,0, 300,200});
 //    static int p = 2;
 //    _ra->setGeometry({p,p,ui->frame->width()-2*p,ui->frame->height()-2*p });
 //    auto b = new QPushButton();
@@ -44,10 +44,7 @@ void MainWindow::on_pushButton_clicked()
 {
     if(_elapsed) return;
 
-    ui->label->setText("");
-    _ra->setMarker(0);
-    _ra->setMtext("");
-    _ra->repaint();
+    Reset();
 
     _elapsed = new QElapsedTimer();
     _elapsed->start();
@@ -70,10 +67,16 @@ void MainWindow::on_timer_timeout()
 void MainWindow::on_pushButton_2_clicked()
 {
     // auto r = ui->frame->geometry();
-    if(!_elapsed) return;
+    if(!_elapsed) { Reset(); return;}
     _timer.stop();
     delete _elapsed; _elapsed = nullptr;   
 }
 
+void MainWindow::Reset(){
+    ui->label->setText("");
+    _ra->setMarker(0);
+    _ra->setMtext("");
+    _ra->repaint();
+}
 
 

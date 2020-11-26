@@ -35,6 +35,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    void Reset();
 private slots:
     void on_pushButton_clicked();
     void on_timer_timeout();

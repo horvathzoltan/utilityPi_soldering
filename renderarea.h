@@ -22,6 +22,7 @@ public:
     void setBrush(const QBrush& b){_brush = b;}
     void setMarker(qreal x){_mx = x;}
     void setMtext(const QString& x){_mtxt = x;}
+    void setRect(const QRect& x){_r = x;}
     //public slots:
 //public slots:
     //void setData();    
@@ -30,6 +31,7 @@ protected:
     void paintEvent(QPaintEvent *event) override;
 
     //QPainter* _painter=nullptr;
+    QRect _r;
     QPen _pen;
     qreal _mx =0;
     QString _mtxt;

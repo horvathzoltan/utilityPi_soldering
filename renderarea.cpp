@@ -41,7 +41,7 @@ void RenderArea::paintEvent(QPaintEvent *event)
         y-=2;
         if(y<br.height())y=br.height();
         p.drawText(2, y, txt);
-        if(_mx>i.x()) my=i.y();
+        if(_mx>i.x()) my=v;
     }
 
     p.setPen(_pen);

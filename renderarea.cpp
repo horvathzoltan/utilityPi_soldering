@@ -1,11 +1,7 @@
 #include "renderarea.h"
 #include <QPainter>
 
-RenderArea::RenderArea(QWidget *parent) : QWidget(parent)
-{
-    //_pen = QPen(Qt::red);
-    //_brush = QBrush(Qt::blue);
-}
+RenderArea::RenderArea(QWidget *parent) : QWidget(parent){}
 
 QSize RenderArea::minimumSizeHint() const
 {
@@ -24,7 +20,30 @@ void RenderArea::paintEvent(QPaintEvent *event)
     auto rect = this->parentWidget()->size();
     this->resize(rect);
 
+    qreal rx = (qreal)rect.width()/_r.width();
+    qreal ry = (qreal)rect.height()/_r.height();
+
     QPainter p(this);
+
+    QPen dashpen(_pen);
+    QVector<qreal> dashes;
+    qreal space = 4;
+    dashes << 4 << space;
+    qreal my;
+    dashpen.setDashPattern(dashes);
+    p.setPen(dashpen);
+    for(auto& i:_pl){
+        auto v = i.y();
+        auto y = rect.height() - v*ry;
+        QString txt = QString::number(v)+"°C";
+        QRect br = p.boundingRect(0, 0, 0, 0, 0, txt);
+        p.drawLine(0, y, rect.width(), y);
+        y-=2;
+        if(y<br.height())y=br.height();
+        p.drawText(2, y, txt);
+        if(_mx>i.x()) my=i.y();
+    }
+
     p.setPen(_pen);
     p.setBrush(_brush);
     p.setRenderHint(QPainter::Antialiasing, true);
@@ -33,56 +52,28 @@ void RenderArea::paintEvent(QPaintEvent *event)
     font.setPixelSize(48);
     p.setFont(font);
 
-    //QTextOption o(Qt::AlignmentFlag::AlignCenter|Qt::AlignmentFlag::AlignHCenter, );
-    if(!_mtxt.isEmpty()) p.drawText(QPointF{100,(qreal)rect.height()/2}, _mtxt);
+    if(!_mtxt.isEmpty()){
+        QRect br = p.boundingRect(0, 0, 0, 0, 0, _mtxt);
 
-//    const QRect rectangle = QRect(0, 0, 100, 50);
-//    QRect boundingRect;
-//    p.drawText(rectangle, 0, tr("Hello"), &boundingRect);
+        auto x = rx*_mx;
+        if(x>rect.width()/2){
+            if(x>rect.width()) x = rect.width();
+            x-=br.width();
+        }
 
-    p.scale(2, -1);
-    p.translate(0, -rect.height());
+        auto y = rect.height()-br.height()-ry*my;
+        if(y<0) y=0;
 
-    p.drawPolyline(_pl.begin(), _pl.count());
-    p.setPen(QPen(Qt::red));
-    p.drawLine(_mx, 0, _mx, rect.height()-1);
+        br.translate(x, y);
+        p.drawText(br, _mtxt);
+    }
 
-//    QLine r2 = {-10, -10, 10, 10};
-//    QLine r3 = {-10, 10, 10, -10};
-//    p.drawLine(r2);
-//    p.drawLine(r3);
 
-    auto rect = this->parentWidget()->size();
-    this->resize(rect);
-
-    QPainter p(this);
-    p.setPen(_pen);
-    p.setBrush(_brush);
-    p.setRenderHint(QPainter::Antialiasing, true);
-
-    QFont font = p.font();
-    font.setPixelSize(48);
-    p.setFont(font);
-
-    //QTextOption o(Qt::AlignmentFlag::AlignCenter|Qt::AlignmentFlag::AlignHCenter, );
-    if(!_mtxt.isEmpty()) p.drawText(QPointF{100,(qreal)rect.height()/2}, _mtxt);
-
-//    const QRect rectangle = QRect(0, 0, 100, 50);
-//    QRect boundingRect;
-//    p.drawText(rectangle, 0, tr("Hello"), &boundingRect);
-
-    qreal rx = rect.width()/_r.width();
-    qreal ry = rect.height()/_r.height();
     p.translate(0, rect.height());
     p.scale(rx, -ry);
 
-
     p.drawPolyline(_pl.begin(), _pl.count());
+
     p.setPen(QPen(Qt::red));
     p.drawLine(_mx, 0, _mx, rect.height()-1);
-
-//    QLine r2 = {-10, -10, 10, 10};
-//    QLine r3 = {-10, 10, 10, -10};
-//    p.drawLine(r2);
-//    p.drawLine(r3);
 }

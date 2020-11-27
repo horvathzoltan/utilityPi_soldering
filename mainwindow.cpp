@@ -1,6 +1,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+/*
+http://www.bristolwatch.com/ele/thermalcouple_amplifier.htm
+https://www.aboutcircuit.com/thermocouple-instrument/
+*/
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -9,23 +13,33 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     connect(&_timer, SIGNAL(timeout()), this, SLOT(on_timer_timeout()));    
     //SNPB
-    _heatdata.append({0, 25, "preheat"}); //start
-    _heatdata.append({70, 100, "soak"}); //
-    _heatdata.append({175, 140, "reflow"});
-    _heatdata.append({240, 220, "cooling"});
-    _heatdata.append({300, 25, "end"}); //end
-    //SN
-//    _heatdata.append({0, 25}); //start
-//    _heatdata.append({120, 100}); //
-//    _heatdata.append({310, 180});
-//    _heatdata.append({375, 260});
-//    _heatdata.append({600, 25}); //end
+
+    _thermal_profiles.append({"SnPb", {
+                                       {0, 25, "preheat"},
+                                       {70, 100, "soak"},
+                                       {175, 140, "reflow"},
+                                       {240, 220, "cooling"},
+                                       {300, 25, "end"}
+                                   }});
+
+    _thermal_profiles.append({"SnPb", {
+                                          {0, 25, "preheat"},
+                                          {120, 100, "soak"},
+                                          {310, 180, "reflow"},
+                                          {375, 260, "cooling"},
+                                          {600, 25, "end"}
+                                   }});
+
 
     _ra = new RenderArea(ui->frame);
     _ra->setPen(QPen(Qt::blue));
     _ra->setBrush(QBrush(Qt::lightGray));
-    _ra->setPolyLine(HeatData::ToQPointF(_heatdata));
-    _ra->setRect({0,0, 300,220});
+    _ra->setPolyLine(HeatData::ToQPointF(heatdata()));
+    _ra->setRect(HeatData::GetMax(heatdata()));
+}
+
+const QVector<MainWindow::HeatData>& MainWindow::heatdata(){
+    return _thermal_profiles[ix]._heatdata;
 }
 
 MainWindow::~MainWindow()
@@ -53,12 +67,12 @@ void MainWindow::on_timer_timeout()
 {
     if(!_elapsed) return;    
     qreal mx = _elapsed->elapsed()/50;
-    if(mx>_heatdata.last().time) Stop();
+    if(mx>heatdata().last().time) Stop();
     QString e = QString::number(mx);
     ui->label->setText(e);
     _ra->setMarker(mx);
     QString* txt=nullptr;
-    for(auto& i:_heatdata){if(mx<i.time) break; txt=&(i.desc); }
+    for(auto i:heatdata()){if(mx<i.time) break; txt=&(i.desc); }
     if(txt) _ra->setMtext(*txt);
     _ra->repaint();
 }

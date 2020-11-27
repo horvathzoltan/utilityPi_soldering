@@ -4,8 +4,6 @@
 #include <QMainWindow>
 #include <QTimer>
 #include <QElapsedTimer>
-#include <QVarLengthArray>
-//#include <QtCharts>
 #include <renderarea.h>
 
 QT_BEGIN_NAMESPACE
@@ -23,18 +21,33 @@ class MainWindow : public QMainWindow
 
       QPointF ToQPointF() const {return {time, temperature};}
 
-      static QVarLengthArray<QPointF> ToQPointF(const QVarLengthArray<HeatData>& h )
+      static QVector<QPointF> ToQPointF(const QVector<HeatData>& h )
       {
-          QVarLengthArray<QPointF> d;
+          QVector<QPointF> d;
           for(auto& i:h) d.append(i.ToQPointF());
           return d;
       }
+
+      static QRectF GetMax(const QVector<HeatData>& h ){
+          qreal x=0, y=0;
+          for(auto& i:h) {
+              if(i.time>x) x=i.time;
+              if(i.temperature>y) y=i.temperature;
+          }
+          return {0, 0, x ,y};
+      };
+    };
+
+    struct ThermalPofile{
+        QString name;
+        QVector<HeatData> _heatdata;
     };
 
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    const QVector<MainWindow::HeatData> &heatdata();
 protected:
     void Reset();
     void Stop();
@@ -47,8 +60,8 @@ private slots:
 private:
     QTimer _timer;
     QElapsedTimer* _elapsed = nullptr;
-    QVarLengthArray<HeatData> _heatdata;
-    //QChart *_chart;
+    QVector<ThermalPofile> _thermal_profiles;
+    int ix = 1;
     Ui::MainWindow *ui;
     RenderArea* _ra;
 

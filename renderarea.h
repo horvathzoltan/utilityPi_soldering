@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QPen>
 #include <QPainter>
+#include <QList>
 
 class RenderArea : public QWidget
 {
@@ -17,22 +18,22 @@ public:
     QSize minimumSizeHint() const override;
     QSize sizeHint() const override;
 
-    void setPolyLine(const QVarLengthArray<QPointF>& pl){_pl = pl;}
+    void setPolyLine(const QVector<QPointF>& pl){_pl = pl;}
     void setPen(const QPen& p){_pen = p;}
     void setBrush(const QBrush& b){_brush = b;}
     void setMarker(qreal x){_mx = x;}
     void setMtext(const QString& x){_mtxt = x;}
-    void setRect(const QRect& x){_r = x;}
+    void setRect(const QRectF& x){_r = x;}
 
 protected:
     void paintEvent(QPaintEvent *event) override;
 
-    QRect _r;
+    QRectF _r;
     QPen _pen;
     qreal _mx =0;
     QString _mtxt;
     QBrush _brush;
-    QVarLengthArray<QPointF> _pl;
+    QVector<QPointF> _pl;
 };
 
 #endif // RENDERAREA_H

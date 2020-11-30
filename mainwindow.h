@@ -41,6 +41,7 @@ class MainWindow : public QMainWindow
     struct ThermalPofile{
         QString name;
         QVector<HeatData> _heatdata;
+        bool isCurrent;
     };
 
 public:
@@ -57,6 +58,8 @@ private slots:
     void on_timer_timeout();
 
     void on_pushButton_2_clicked();
+    void on_listWidget_currentRowChanged(int currentRow);
+
 private:
     QTimer _timer;
     QElapsedTimer* _elapsed = nullptr;

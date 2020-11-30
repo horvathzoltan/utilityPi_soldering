@@ -124,6 +124,11 @@
            <height>64</height>
           </size>
          </property>
+         <property name="font">
+          <font>
+           <pointsize>16</pointsize>
+          </font>
+         </property>
         </widget>
        </item>
        <item>
